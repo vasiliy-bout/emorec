@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<classes>
+	<class name="Normal" letter="n" default="true" />
+	<class name="Smile" letter="s" />
+	<class name="Wonder" letter="w" />
+	<class name="Sad" letter="d" />
+	<class name="Angry" letter="a" />
+</classes>
