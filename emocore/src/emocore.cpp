@@ -2,7 +2,8 @@
 #include "emocore.h"
 
 
-EmoCore::EmoCore(const std::string &classifier, const std::string &model, const std::string &mlp) {
+EmoCore::EmoCore(const std::string &classifier, const std::string &model, const std::string &mlp) :
+		myClassifier(classifier), myModel(model), myMLP(mlp) {
 }
 
 
