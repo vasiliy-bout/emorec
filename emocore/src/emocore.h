@@ -2,11 +2,7 @@
 #ifndef __EMOCORE_H__
 #define __EMOCORE_H__
 
-
-#define CV_NO_BACKWARD_COMPATIBILITY
-
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
+#include <emobase.h>
 
 
 class EmoCore {

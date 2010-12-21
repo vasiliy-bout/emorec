@@ -1,6 +1,6 @@
 include $(ROOTDIR)/makefiles/config.mk
 
-INCLUDE = $(ZINCLUDE) $(EXTERNAL_INCLUDE)
+INCLUDE = $(EMOINCLUDE)
 
 HEADERS = $(wildcard *.h)
 SOURCES_CPP = $(wildcard *.cpp)

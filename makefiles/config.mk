@@ -18,6 +18,7 @@ ifeq "$(TARGET_STATUS)" "profile"
 	LDFLAGS += -pg
 endif
 
+EMOINCLUDE = -I "$(ROOTDIR)/emocore/include"
 
 ifneq "$(BUILD_RESOURCE_OBJECT)" "yes"
 .resources:
