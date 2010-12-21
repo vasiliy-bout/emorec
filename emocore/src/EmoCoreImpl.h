@@ -8,23 +8,24 @@
 class EmoCoreImpl : public EmoCore {
 
 public:
-	EmoCoreImpl(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes);
+	EmoCoreImpl();
 
-	int init();
+	int init(std::vector<unsigned char> &classes, const std::map<std::string, std::string> &parameters);
 	int extractFace(const cv::Mat &img, cv::Rect &face);
 	int guess(const cv::Mat &face, std::map<unsigned char, float> &results);
-	int collectClasses(std::vector<EmoClass> &classes);
+
+	const std::vector<unsigned char> &classes() const;
 
 private:
 	bool myInitialized;
+	std::vector<unsigned char> myClasses;
 	cv::CascadeClassifier myCvCascade;
 	cv::PCA myCvPCA;
 	CvANN_MLP myCvMLP;
-	std::vector<EmoClass> myEmoClasses;
-
 	float myScale;
 	float myMinFace;
 };
 
+inline const std::vector<unsigned char> &EmoCoreImpl::classes() const { return myClasses; }
 
 #endif /* __EMOFACEDETECTOR_H__ */

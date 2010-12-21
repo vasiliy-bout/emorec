@@ -1,21 +1,73 @@
 
+#include <stdio.h>
+
 #include "EmoCoreImpl.h"
 
+#include "EmoPCAReader.h"
 #include "EmoErrors.h"
 
 
-EmoCoreImpl::EmoCoreImpl(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes) :
-		EmoCore(classifier, pca, mlp, classes), myInitialized(false) {
-	myScale = 1.1f;
-	myMinFace = 0.25f;
+
+static const std::string PARAM_CASCADE = "cascade";
+static const std::string PARAM_MLP = "mlp";
+static const std::string PARAM_PCA = "pca";
+static const std::string PARAM_FEATURES = "features";
+static const std::string PARAM_SCALE = "scale";
+static const std::string PARAM_MIN_FACE = "minFacePercent";
+
+
+EmoCoreImpl::EmoCoreImpl() : myInitialized(false) {
 }
 
-int EmoCoreImpl::init() {
-	if (!myCvCascade.load(getClassifier())) {
+int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::string, std::string> &parameters) {
+	if (classes.empty()) {
+		return EMOERR_INVALID_CLASSES;
+	}
+	myClasses.assign(classes.begin(), classes.end());
+
+	std::map<std::string, std::string>::const_iterator cascadeIter = parameters.find(PARAM_CASCADE);
+	std::map<std::string, std::string>::const_iterator mlpIter = parameters.find(PARAM_MLP);
+	std::map<std::string, std::string>::const_iterator pcaIter = parameters.find(PARAM_PCA);
+	std::map<std::string, std::string>::const_iterator featuresIter = parameters.find(PARAM_FEATURES);
+	std::map<std::string, std::string>::const_iterator scaleIter = parameters.find(PARAM_SCALE);
+	std::map<std::string, std::string>::const_iterator minFaceIter = parameters.find(PARAM_MIN_FACE);
+
+	if (cascadeIter == parameters.end() ||
+			mlpIter == parameters.end() ||
+			pcaIter == parameters.end() ||
+			featuresIter == parameters.end() ||
+			scaleIter == parameters.end() ||
+			minFaceIter == parameters.end() ||
+			myClasses.empty()) {
+		return EMOERR_NOPARAMETERS;
+	}
+
+	const std::string &cascade = cascadeIter->second;
+	const std::string &mlp = mlpIter->second;
+	const std::string &pca = pcaIter->second;
+
+	float features = 0.01f;
+	if (sscanf(featuresIter->second.c_str(), "%f", &features) != 1) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+	if (sscanf(scaleIter->second.c_str(), "%f", &myScale) != 1 || myScale <= 1.0f) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+	if (sscanf(minFaceIter->second.c_str(), "%f", &myMinFace) != 1 || myMinFace < 0.0f || myMinFace > 1.0f) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+
+
+	if (!myCvCascade.load(cascade)) {
 		return EMOERR_CANT_LOAD_CLASSIFIER;
 	}
 
-	myCvMLP.load(getMLP().c_str());
+	cv::Size imageSize;
+	if (!EmoPCAReader::loadPCA(pca, imageSize, myCvPCA, features)) {
+		return EMOERR_CANT_LOAD_PCA;
+	}
+
+	myCvMLP.load(mlp.c_str());
 	if (myCvMLP.get_layer_count() == 0) {
 		return EMOERR_CANT_LOAD_MLP;
 	}
@@ -50,14 +102,6 @@ int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &resu
 	if (!myInitialized) {
 		return EMOERR_NOT_INITIALIZED;
 	}
-	return 0;
-}
-
-int EmoCoreImpl::collectClasses(std::vector<EmoClass> &classes) {
-	if (!myInitialized) {
-		return EMOERR_NOT_INITIALIZED;
-	}
-	classes.assign(myEmoClasses.begin(), myEmoClasses.end());
 	return 0;
 }
 

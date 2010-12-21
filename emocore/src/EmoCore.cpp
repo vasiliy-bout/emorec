@@ -2,14 +2,15 @@
 #include "EmoCore.h"
 #include "EmoErrors.h"
 
+#include "EmoCoreImpl.h"
 
-shared_ptr<EmoCore> EmoCore::create(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes) {
-	return 0;
+
+shared_ptr<EmoCore> EmoCore::create() {
+	return new EmoCoreImpl();
 }
 
 
-EmoCore::EmoCore(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes) :
-		myClassifier(classifier), myPCA(pca), myMLP(mlp), myClasses(classes) {
+EmoCore::EmoCore() {
 }
 
 EmoCore::~EmoCore() {
@@ -28,8 +29,12 @@ std::string EmoCore::getErrorMessage(int errcode) {
 		return "Unable to load PCA-model";
 	case EMOERR_CANT_LOAD_MLP:
 		return "Unable to load MLP-model";
-	case EMOERR_CANT_LOAD_CLASSES:
-		return "Unable to load classes XML-file";
+	case EMOERR_INVALID_CLASSES:
+		return "Invalid list of classes";
+	case EMOERR_NOPARAMETERS:
+		return "Required parameter have not been specified";
+	case EMOERR_INVALID_PARAMETERS:
+		return "Invalid parameter value";
 	}
 	return "Unknown error";
 }

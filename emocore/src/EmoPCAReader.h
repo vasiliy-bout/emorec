@@ -11,6 +11,7 @@
 
 class EmoPCAReader : public EmoXMLReader {
 
+public:
 	static bool loadPCA(const std::string &fileName, cv::Size &imageSize, cv::PCA &pca, float featuresArg);
 
 private:
