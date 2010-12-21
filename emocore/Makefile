@@ -4,8 +4,8 @@ include $(MAKEFILESDIR)/config.mk
 
 TARGET = libemocore.a
 
-SUBDIRS_ALL = src
-SUBDIRS = src
+SUBDIRS_ALL = src src/xml src/xml/expat
+SUBDIRS = src src/xml src/xml/expat
 
 ifeq "$(TARGET_ARCH)" "win32"
 #  SUBDIRS += 

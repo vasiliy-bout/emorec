@@ -1,6 +1,8 @@
 
 #include "EmoCoreImpl.h"
 
+#include "EmoErrors.h"
+
 
 EmoCoreImpl::EmoCoreImpl(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes) :
 		EmoCore(classifier, pca, mlp, classes), myInitialized(false) {
@@ -10,12 +12,12 @@ EmoCoreImpl::EmoCoreImpl(const std::string &classifier, const std::string &pca, 
 
 int EmoCoreImpl::init() {
 	if (!myCvCascade.load(getClassifier())) {
-		return ERROR_CANT_LOAD_CLASSIFIER;
+		return EMOERR_CANT_LOAD_CLASSIFIER;
 	}
 
 	myCvMLP.load(getMLP().c_str());
 	if (myCvMLP.get_layer_count() == 0) {
-		return ERROR_CANT_LOAD_MLP;
+		return EMOERR_CANT_LOAD_MLP;
 	}
 
 	myInitialized = true;
@@ -24,7 +26,7 @@ int EmoCoreImpl::init() {
 
 int EmoCoreImpl::extractFace(const cv::Mat &img, cv::Rect &face) {
 	if (!myInitialized) {
-		return ERROR_NOT_INITIALIZED;
+		return EMOERR_NOT_INITIALIZED;
 	}
 	cv::Mat buffer;
 	cv::cvtColor(img, buffer, CV_BGR2GRAY);
@@ -46,14 +48,14 @@ int EmoCoreImpl::extractFace(const cv::Mat &img, cv::Rect &face) {
 
 int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &results) {
 	if (!myInitialized) {
-		return ERROR_NOT_INITIALIZED;
+		return EMOERR_NOT_INITIALIZED;
 	}
 	return 0;
 }
 
 int EmoCoreImpl::collectClasses(std::vector<EmoClass> &classes) {
 	if (!myInitialized) {
-		return ERROR_NOT_INITIALIZED;
+		return EMOERR_NOT_INITIALIZED;
 	}
 	classes.assign(myEmoClasses.begin(), myEmoClasses.end());
 	return 0;

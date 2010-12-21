@@ -13,14 +13,6 @@
 class EmoCore {
 
 public:
-	static const int ERROR_OK;
-	static const int ERROR_NOT_INITIALIZED;
-	static const int ERROR_CANT_LOAD_CLASSIFIER;
-	static const int ERROR_CANT_LOAD_PCA;
-	static const int ERROR_CANT_LOAD_MLP;
-	static const int ERROR_CANT_LOAD_CLASSES;
-
-public:
 	static shared_ptr<EmoCore> create(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes);
 
 protected:
