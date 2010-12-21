@@ -9,7 +9,9 @@
 bool EmoClassesReader::loadClasses(const std::string &fileName, std::vector<EmoClass> &classes) {
 	EmoClassesReader reader(classes);
 
-	reader.readDocument(fileName);
+	if (!reader.readDocument(fileName)) {
+		return false;
+	}
 	if (reader.isInterrupted()) {
 		return false;
 	}
