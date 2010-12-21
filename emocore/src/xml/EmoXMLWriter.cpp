@@ -69,6 +69,13 @@ EmoXMLWriter::EmoXMLWriter(const std::string &fileName) {
 	writeString(myFile, XML_BANNER);
 }
 
+EmoXMLWriter::~EmoXMLWriter() {
+	if (myFile != 0) {
+		fclose(myFile);
+	}
+}
+
+
 void EmoXMLWriter::addTag(const std::string &name, bool single) {
 	flushTagStart();
 	myCurrentTag = new Tag(name, single);

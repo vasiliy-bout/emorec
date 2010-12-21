@@ -66,6 +66,4 @@ inline bool EmoXMLWriter::Tag::isSingle() const { return mySingle; }
 inline bool EmoXMLWriter::Tag::isDataEmpty() const { return myData.empty(); }
 inline EmoXMLWriter::Tag::~Tag() {}
 
-inline EmoXMLWriter::~EmoXMLWriter() {}
-
 #endif /* __EMOXMLWRITER_H__ */
