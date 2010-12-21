@@ -3,6 +3,7 @@
 #define __EMOCORE_H__
 
 #include <map>
+#include <vector>
 
 #include <emobase.h>
 
@@ -14,6 +15,10 @@ class EmoCore {
 public:
 	static const int ERROR_OK;
 	static const int ERROR_NOT_INITIALIZED;
+	static const int ERROR_CANT_LOAD_CLASSIFIER;
+	static const int ERROR_CANT_LOAD_PCA;
+	static const int ERROR_CANT_LOAD_MLP;
+	static const int ERROR_CANT_LOAD_CLASSES;
 
 public:
 	static shared_ptr<EmoCore> create(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes);
@@ -24,12 +29,11 @@ protected:
 public:
 	virtual ~EmoCore();
 
+	std::string getErrorMessage(int errcode);
+
 	virtual int init() = 0;
 	virtual int extractFace(const cv::Mat &img, cv::Rect &face) = 0;
 	virtual int guess(const cv::Mat &face, std::map<unsigned char, float> &results) = 0;
-
-	std::string getErrorMessage(int errcode);
-
 	virtual int collectClasses(std::vector<EmoClass> &classes) = 0;
 
 public:
@@ -43,6 +47,10 @@ private:
 	const std::string myPCA;
 	const std::string myMLP;
 	const std::string myClasses;
+
+private: // disable copying
+	EmoCore(const EmoCore &);
+	const EmoCore &operator = (const EmoCore &);
 };
 
 inline const std::string &EmoCore::getClassifier() const { return myClassifier; }

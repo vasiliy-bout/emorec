@@ -9,6 +9,7 @@
 
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
+#include <opencv/ml.h>
 
 
 #endif /* __EMOBASE_H__ */
