@@ -4,6 +4,8 @@
 
 EmoCoreImpl::EmoCoreImpl(const std::string &classifier, const std::string &pca, const std::string &mlp, const std::string &classes) :
 		EmoCore(classifier, pca, mlp, classes), myInitialized(false) {
+	myScale = 1.1f;
+	myMinFace = 0.25f;
 }
 
 int EmoCoreImpl::init() {
@@ -21,10 +23,31 @@ int EmoCoreImpl::init() {
 }
 
 int EmoCoreImpl::extractFace(const cv::Mat &img, cv::Rect &face) {
+	if (!myInitialized) {
+		return ERROR_NOT_INITIALIZED;
+	}
+	cv::Mat buffer;
+	cv::cvtColor(img, buffer, CV_BGR2GRAY);
+	cv::equalizeHist(buffer, buffer);
+
+	std::vector<cv::Rect> faces;
+	myCvCascade.detectMultiScale(buffer, faces, myScale, 2,
+		CV_HAAR_SCALE_IMAGE | CV_HAAR_FIND_BIGGEST_OBJECT,
+		cv::Size(buffer.cols * myMinFace, buffer.rows * myMinFace));
+
+	if (faces.empty()) {
+		face = cv::Rect(0, 0, 0, 0);
+	} else {
+		face = faces[0];
+	}
+
 	return 0;
 }
 
 int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &results) {
+	if (!myInitialized) {
+		return ERROR_NOT_INITIALIZED;
+	}
 	return 0;
 }
 
@@ -35,21 +58,4 @@ int EmoCoreImpl::collectClasses(std::vector<EmoClass> &classes) {
 	classes.assign(myEmoClasses.begin(), myEmoClasses.end());
 	return 0;
 }
-
-
-/*
-EmoFaceDetector::EmoFaceDetector(cv::CascadeClassifier &classifier) : myCvClassifier(classifier) {
-}
-
-
-void EmoFaceDetector::detectFaces(const cv::Mat &img, double scale, std::vector<cv::Rect> &faces) const {
-	cv::Mat buffer;
-	cv::cvtColor(img, buffer, CV_BGR2GRAY);
-	cv::equalizeHist(buffer, buffer);
-
-	faces.clear();
-	myCvClassifier.detectMultiScale(buffer, faces, scale, 2, 
-		CV_HAAR_SCALE_IMAGE | CV_HAAR_FIND_BIGGEST_OBJECT,
-		cv::Size(30, 30));
-}*/
 

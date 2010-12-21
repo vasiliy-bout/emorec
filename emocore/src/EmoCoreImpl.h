@@ -21,6 +21,9 @@ private:
 	cv::PCA myCvPCA;
 	CvANN_MLP myCvMLP;
 	std::vector<EmoClass> myEmoClasses;
+
+	float myScale;
+	float myMinFace;
 };
 
 
