@@ -17,6 +17,9 @@ public:
 	const std::vector<unsigned char> &classes() const;
 
 private:
+	void convertFace(const cv::Mat &face, cv::Mat &converted) const;
+
+private:
 	bool myInitialized;
 	std::vector<unsigned char> myClasses;
 	cv::CascadeClassifier myCvCascade;
@@ -24,6 +27,7 @@ private:
 	CvANN_MLP myCvMLP;
 	float myScale;
 	float myMinFace;
+	int myFaceSize;
 };
 
 inline const std::vector<unsigned char> &EmoCoreImpl::classes() const { return myClasses; }

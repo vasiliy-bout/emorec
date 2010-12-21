@@ -66,6 +66,10 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 	if (!EmoPCAReader::loadPCA(pca, imageSize, myCvPCA, features)) {
 		return EMOERR_CANT_LOAD_PCA;
 	}
+	if (imageSize.width != imageSize.height) {
+		return EMOERR_INVALID_PCA_MODEL;
+	}
+	myFaceSize = imageSize.height;
 
 	myCvMLP.load(mlp.c_str());
 	if (myCvMLP.get_layer_count() == 0) {
@@ -98,9 +102,45 @@ int EmoCoreImpl::extractFace(const cv::Mat &img, cv::Rect &face) {
 	return 0;
 }
 
+
+
+void EmoCoreImpl::convertFace(const cv::Mat &face, cv::Mat &converted) const {
+	cv::Mat gray, resized;
+	cv::cvtColor(face, gray, CV_BGR2GRAY);
+	cv::resize(gray, resized, cv::Size(myFaceSize, myFaceSize), 0, 0, cv::INTER_LINEAR);
+	cv::equalizeHist(resized, resized);
+	resized.convertTo(converted, CV_32FC1, 1.0 / 255);
+}
+
+
 int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &results) {
 	if (!myInitialized) {
 		return EMOERR_NOT_INITIALIZED;
+	}
+
+	cv::Mat converted;
+	convertFace(face, converted);
+
+	cv::Mat features;
+	myCvPCA.project(converted.reshape(0, 1), features);
+
+	cv::Mat output;
+	myCvMLP.predict(features, output);
+
+	if (output.rows != 1) {
+		return EMOERR_INTERNAL_ERROR;
+	}
+	if (output.cols != (int)myClasses.size()) {
+		return EMOERR_INVALID_MLP_OR_CLASSES;
+	}
+
+	cv::normalize(output, output, 0.0, 1.0, cv::NORM_MINMAX);
+
+	results.clear();
+	for (int j = 0; j < output.cols; ++j) {
+		const float prob = output.at<float>(0, j);
+		const unsigned char letter = myClasses[j];
+		results[letter] = prob;
 	}
 	return 0;
 }
