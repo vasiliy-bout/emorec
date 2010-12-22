@@ -17,7 +17,7 @@ EmoCore::~EmoCore() {
 }
 
 
-std::string EmoCore::getErrorMessage(int errcode) {
+std::string EmoCore::errorMessage(int errcode) {
 	switch (errcode) {
 	case EMOERR_OK:
 		return "";

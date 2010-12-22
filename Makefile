@@ -3,7 +3,7 @@ ROOTDIR = $(CURDIR)
 include makefiles/platforms.mk
 
 EMOLIBDIRS = emocore
-APPDIRS = 
+APPDIRS = emoguess
 
 all:
 	@for dir in $(EMOLIBDIRS) $(APPDIRS); do \
