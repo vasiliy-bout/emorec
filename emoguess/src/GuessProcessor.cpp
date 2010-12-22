@@ -169,6 +169,7 @@ void GuessProcessor::displayResults(const cv::Mat &image, const cv::Rect &faceRe
 	std::cout << "VERDICT:\t\"" << myClasses[verdict].name().c_str() << "\"" << std::endl;
 	std::cout << "DONE" << std::endl;
 	std::cout << std::endl;
+	cv::waitKey();
 }
 
 /**

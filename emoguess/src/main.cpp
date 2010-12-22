@@ -29,7 +29,7 @@ static bool testArg(const std::string &flag, const char *arg) {
 }
 
 
-int exec(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile);
+int exec(const std::string &input, const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile);
 
 int main(int argc, char *argv[]) {
 	std::string classesFile = "classes.xml";
@@ -56,15 +56,21 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	return exec(classesFile, coreConfigFile, guiConfigFile);
+	return exec(inputName, classesFile, coreConfigFile, guiConfigFile);
 }
 
 
-int exec(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) {
+int exec(const std::string &input, const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) {
 	std::string msg;
 	GuessProcessor processor;
 
 	msg = processor.init(classesFile, coreConfigFile, guiConfigFile);
+	if (!msg.empty()) {
+		std::cerr << "ERROR: " << msg << std::endl;
+		return 1;
+	}
+
+	msg = processor.processInput(input);
 	if (!msg.empty()) {
 		std::cerr << "ERROR: " << msg << std::endl;
 		return 1;

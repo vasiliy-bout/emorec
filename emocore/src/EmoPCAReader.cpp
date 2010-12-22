@@ -54,7 +54,7 @@ void EmoPCAReader::startElementHandler(const char *tag, const char **attributes)
 			break;
 		case READ_PCA:
 			do {
-				int cols = -1, rows = -1, type = -1;
+				int cols = -1, rows = -1;
 				const char *buf;
 				if ((buf = attributeValue(attributes, "cols")) != 0) {
 					if (sscanf(buf, "%d", &cols) != 1) {
@@ -66,12 +66,7 @@ void EmoPCAReader::startElementHandler(const char *tag, const char **attributes)
 						rows = -1;
 					}
 				}
-				if ((buf = attributeValue(attributes, "type")) != 0) {
-					if (sscanf(buf, "%d", &type) != 1) {
-						type = -1;
-					}
-				}
-				if (cols == -1 || rows == -1 || type != CV_32FC1) {
+				if (cols == -1 || rows == -1) {
 					interrupt();
 				} else if (TAG_MEAN.compare(tag) == 0) {
 					myState = READ_MEAN;
