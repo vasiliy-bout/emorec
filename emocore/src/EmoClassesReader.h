@@ -10,6 +10,7 @@
 
 class EmoClassesReader : public EmoXMLReader {
 
+public:
 	static bool loadClasses(const std::string &fileName, std::vector<EmoClass> &classes);
 
 private:
