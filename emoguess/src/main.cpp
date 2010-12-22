@@ -56,10 +56,9 @@ int main(int argc, char *argv[]) {
 
 int exec(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) {
 	std::string msg;
+	GuessProcessor processor;
 
-	GuessProcessor processor(classesFile, coreConfigFile, guiConfigFile);
-
-	msg = processor.init();
+	msg = processor.init(classesFile, coreConfigFile, guiConfigFile);
 	if (!msg.empty()) {
 		std::cerr << "ERROR: " << msg << std::endl;
 		return 1;

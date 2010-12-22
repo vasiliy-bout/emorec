@@ -12,15 +12,13 @@
 class GuessProcessor {
 
 public:
-	GuessProcessor(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile);
+	GuessProcessor();
 
-	std::string init();
+	std::string init(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile);
+
+	//std::string processInput(const std::string &input);
 
 private:
-	const std::string myClassesFile;
-	const std::string myCoreConfigFile;
-	const std::string myGuiConfigFile;
-
 	shared_ptr<EmoCore> myCore;
 	std::vector<EmoClass> myClasses;
 };

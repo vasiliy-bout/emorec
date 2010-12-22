@@ -9,25 +9,24 @@
 #include <EmoClassesReader.h>
 
 
-GuessProcessor::GuessProcessor(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) :
-		myClassesFile(classesFile), myCoreConfigFile(coreConfigFile), myGuiConfigFile(guiConfigFile) {
+GuessProcessor::GuessProcessor() {
 }
 
-std::string GuessProcessor::init() {
+std::string GuessProcessor::init(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) {
 
 	myCore = EmoCore::create();
 
 	std::map<std::string, std::string> coreConfig;
 	//std::map<std::string, std::string> guiConfig;
 
-	if (!EmoConfigReader::loadConfig(myCoreConfigFile, coreConfig)) {
+	if (!EmoConfigReader::loadConfig(coreConfigFile, coreConfig)) {
 		return "Unable to load core config";
 	}
-	/*if (!EmoConfigReader::loadConfig(myGuiConfigFile, guiConfig)) {
+	/*if (!EmoConfigReader::loadConfig(guiConfigFile, guiConfig)) {
 		return "Unable to load GUI config";
 	}*/
 
-	if (!EmoClassesReader::loadClasses(myClassesFile, myClasses)) {
+	if (!EmoClassesReader::loadClasses(classesFile, myClasses)) {
 		return "Unable load classes";
 	}
 
