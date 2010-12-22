@@ -14,7 +14,13 @@ void printUsage() {
 		"\t[--classes=\"<classes xml file>\"]\n"
 		"\t[--core-config=\"<core config xml file>\"]\n"
 		"\t[--gui-config=\"<gui config xml file>\"]\n"
-		"\t<input file>\n" ;
+		"\t<input file>\n"
+		"\n"
+		"Default values:\n"
+		"\t--classes=\"classes.xml\"\n"
+		"\t--core-config=\"coreconfig.xml\"\n"
+		"\t--gui-config=\"guiconfig.xml\"\n"
+		"\n";
 }
 
 static bool testArg(const std::string &flag, const char *arg) {
