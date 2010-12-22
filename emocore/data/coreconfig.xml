@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <config>
-	<property name="cascade" value="path to cascade" />
-	<property name="mlp" value="path to mlp" />
-	<property name="pca" value="path to pca" />
+	<property name="cascade" value="haarcascades/haarcascade_frontalface_alt.xml" />
+	<property name="mlp" value="mlp/eigen-vk-train_on-dcim.xml" />
+	<property name="pca" value="pca/vk.xml" />
 	<!--	
         featuresArg parameter:
            featuresArg <= 0.0f       - load all available eigenfaces
