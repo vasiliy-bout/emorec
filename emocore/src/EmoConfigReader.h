@@ -2,9 +2,9 @@
 #ifndef __EMOCONFIGREADER_H__
 #define __EMOCONFIGREADER_H__
 
-#include <vector>
+#include <map>
 
-#include "xml/EmoXMLReader.h"
+#include <EmoXMLReader.h>
 
 
 

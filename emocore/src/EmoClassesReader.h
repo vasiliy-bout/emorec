@@ -4,9 +4,8 @@
 
 #include <vector>
 
-#include "xml/EmoXMLReader.h"
-
-#include "EmoClass.h"
+#include <EmoXMLReader.h>
+#include <EmoClass.h>
 
 
 class EmoClassesReader : public EmoXMLReader {
