@@ -10,7 +10,7 @@
 
 class EmoConfigReader : public EmoXMLReader {
 
-	static bool loadClasses(const std::string &fileName, std::map<std::string, std::string> &properties);
+	static bool loadConfig(const std::string &fileName, std::map<std::string, std::string> &properties);
 
 private:
 	EmoConfigReader(std::map<std::string, std::string> &properties);

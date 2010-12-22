@@ -5,8 +5,7 @@
 #include "EmoErrors.h"
 
 
-
-bool EmoConfigReader::loadClasses(const std::string &fileName, std::map<std::string, std::string> &properties) {
+bool EmoConfigReader::loadConfig(const std::string &fileName, std::map<std::string, std::string> &properties) {
 	EmoConfigReader reader(properties);
 	if (!reader.readDocument(fileName)) {
 		return false;
