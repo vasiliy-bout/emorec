@@ -1,4 +1,8 @@
 
+ifeq "$(INSTALLDIR)" ""
+	INSTALLDIR = $(ROOTDIR)
+endif
+
 CC = ccache gcc
 AR = ar rsu
 LD = g++

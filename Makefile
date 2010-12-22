@@ -23,3 +23,13 @@ clean:
 		fi; \
 	done
 
+
+install: all do_install
+
+do_install:
+	@for dir in $(EMOLIBDIRS) $(APPDIRS); do \
+		if [ -d $$dir ]; then \
+			cd $$dir; make $@; cd $(ROOTDIR); \
+		fi; \
+	done
+

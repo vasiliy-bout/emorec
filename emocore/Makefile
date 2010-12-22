@@ -37,3 +37,8 @@ clean:
 	done;
 	@$(RM) *.so *.so.* *.dylib *.a
 
+
+do_install:
+	@install -d $(BINDIR)
+	@install -m 0644 $(wildcard data/*.xml) $(BINDIR)
+

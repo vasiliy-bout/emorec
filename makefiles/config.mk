@@ -5,6 +5,8 @@ LIBMAKE = $(MAKE) ZLSHARED=$(ZLSHARED)
 
 include $(ROOTDIR)/makefiles/arch/$(TARGET_ARCH).mk
 
+BINDIR ?= $(INSTALLDIR)/bin
+
 
 ifeq "$(TARGET_STATUS)" "release"
 	CFLAGS += -O3

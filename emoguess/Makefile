@@ -5,7 +5,6 @@ MAKEFILESDIR = $(ROOTDIR)/makefiles
 include $(MAKEFILESDIR)/config.mk
 
 TARGET = emoguess
-target = emoguess
 
 ALL_SUBDIRS = src
 SUBDIRS = src
@@ -25,4 +24,9 @@ clean:
 		$(MAKE) -C $$subdir -f $(MAKEFILESDIR)/subdir.mk clean; \
 	done;
 	@$(RM) $(TARGET) err
+
+do_install:
+	@install -d $(BINDIR)
+	@install $(TARGET) $(BINDIR)/$(TARGET)
+	@install -m 0644 data/guiconfig.xml $(BINDIR)/guiconfig.xml
 
