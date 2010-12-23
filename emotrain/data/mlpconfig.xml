@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+	<!--	
+        featuresArg parameter:
+           featuresArg <= 0.0f       - load all available eigenfaces
+           0.0f < featuresArg < 1.0f - load eigenfaces for which (eigenvalue >= featuresArg * max(eigenvalue))
+           featuresArg >= 1.0f       - load at most ((int) featuresArg) first eigenfaces
+	-->
+	<property name="features" value="0.01" />
+	<property name="hiddenLayers" value="1" />
+</classes>

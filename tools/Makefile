@@ -7,7 +7,7 @@ TOOLS = mkindex
 all: $(TOOLS)
 
 clean:
-	@rm $(TOOLS)
+	@rm -rf $(TOOLS)
 
 
 do_install:
