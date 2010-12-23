@@ -20,9 +20,9 @@ bool EmoPCAWriter::write(const std::string &fileName, const cv::Size &imageSize,
 	writer.addTag("pca", false);
 
 	writeSource(writer, imageSize);
-	writeMatrix(writer, "mean", pca.mean);
-	writeMatrix(writer, "eigenvalues", pca.eigenvalues);
-	writeMatrix(writer, "eigenvectors", pca.eigenvectors);
+	writeMatrix(writer, "mean", pca.mean, 1);
+	writeMatrix(writer, "eigenvalues", pca.eigenvalues, 1);
+	writeMatrix(writer, "eigenvectors", pca.eigenvectors, 1);
 
 	writer.closeAllTags();
 
@@ -45,7 +45,7 @@ void EmoPCAWriter::writeSource(EmoXMLWriter &writer, const cv::Size &imageSize) 
 	writer.addAttribute("cols", oss.str());
 }
 
-void EmoPCAWriter::writeMatrix(EmoXMLWriter &writer, const std::string &name, const cv::Mat &matrix) {
+void EmoPCAWriter::writeMatrix(EmoXMLWriter &writer, const std::string &name, const cv::Mat &matrix, int indent) {
 	writer.addTag(name, false);
 
 	std::ostringstream oss;
@@ -59,6 +59,17 @@ void EmoPCAWriter::writeMatrix(EmoXMLWriter &writer, const std::string &name, co
 	writer.addAttribute("cols", oss.str());
 
 	oss.str("");
+	oss << "0x" << std::hex << matrix.type() << std::dec;
+	writer.addAttribute("type", oss.str());
+
+	oss.str("");
+	oss << "\n";
+	for (int i = 0; i <= indent; ++i) {
+		oss << "\t";
+	}
+	std::string dataIndent(oss.str());
+
+	oss.str("");
 	oss << std::setprecision(12);
 	for (int i = 0; i < matrix.rows; ++i) {
 		for (int j = 0; j < matrix.cols; ++j) {
@@ -68,10 +79,16 @@ void EmoPCAWriter::writeMatrix(EmoXMLWriter &writer, const std::string &name, co
 				oss << " ";
 			}
 		}
-		oss << "\n";
+		writer.addData(dataIndent);
 		writer.addData(oss.str());
 		oss.str("");
 	}
+
+	oss << "\n";
+	for (int i = 0; i < indent; ++i) {
+		oss << "\t";
+	}
+	writer.addData(oss.str());
 
 	writer.closeTag();
 }

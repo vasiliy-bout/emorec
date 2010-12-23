@@ -19,8 +19,7 @@ public:
 
 private:
 	void writeSource(EmoXMLWriter &writer, const cv::Size &imageSize);
-	void writeMatrix(EmoXMLWriter &writer, const std::string &name, const cv::Mat &matrix);
-
+	void writeMatrix(EmoXMLWriter &writer, const std::string &name, const cv::Mat &matrix, int indent);
 };
 
 

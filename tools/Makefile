@@ -9,3 +9,6 @@ all: $(TOOLS)
 clean:
 	@rm $(TOOLS)
 
+
+do_install:
+

@@ -3,6 +3,7 @@
 *.a
 *.d
 *.o
-emoguess
 /tools/mkindex
+/emoguess/emoguess
+/emoeigen/emoeigen
 

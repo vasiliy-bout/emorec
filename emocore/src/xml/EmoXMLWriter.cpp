@@ -30,7 +30,7 @@ static const std::string RANGLE = ">";
 static const std::string RANGLE_EOL = ">\n";
 static const std::string SLASH = "/";
 static const std::string SPACE = " ";
-static const std::string TWO_SPACES = "  ";
+static const std::string INDENT = "\t";
 static const std::string QUOTE = "\"";
 static const std::string EQUALS_QUOTE = "=\"";
 
@@ -100,7 +100,7 @@ void EmoXMLWriter::closeTag() {
 		myTags.pop();
 		if (tag->isDataEmpty()) {
 			for (unsigned int i = 0; i < myTags.size(); ++i) {
-				writeString(myFile, TWO_SPACES);
+				writeString(myFile, INDENT);
 			}
 		}
 		tag->writeEnd(myFile);
@@ -117,7 +117,7 @@ void EmoXMLWriter::closeAllTags() {
 void EmoXMLWriter::flushTagStart() {
 	if (myCurrentTag != 0) {
 		for (unsigned int i = 0; i < myTags.size(); ++i) {
-			writeString(myFile, TWO_SPACES);
+			writeString(myFile, INDENT);
 		}
 		myCurrentTag->writeStart(myFile);
 		if (!myCurrentTag->isSingle()) {
