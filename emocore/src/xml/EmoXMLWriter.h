@@ -40,7 +40,7 @@ private:
 		std::vector<Attribute> myAttributes;
 	};
 
-protected:
+public:
 	EmoXMLWriter(const std::string &fileName);
 	virtual ~EmoXMLWriter();
 
