@@ -172,7 +172,10 @@ char TrainProcessor::category(const std::string &fileName) {
 
 
 std::string TrainProcessor::saveToFile(const std::string &mlp) {
+
+	std::cout << "Saving MLP to file: " << mlp << std::endl;
 	myCvMLP.save(mlp.c_str());
+
 	return "";
 }
 

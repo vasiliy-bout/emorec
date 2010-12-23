@@ -117,6 +117,7 @@ bool EigenProcessor::fillSamples(const std::string &input, cv::Mat &samples) {
 std::string EigenProcessor::saveToFile(const std::string &pca) {
 	EmoPCAWriter writer;
 
+	std::cout << "Saving PCA to file: " << pca << std::endl;
 	if (!writer.write(pca, cv::Size(myFaceWidth, myFaceHeight), myCvPCA)) {
 		return "Unable to write PCA data to file";
 	}
