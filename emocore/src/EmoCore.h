@@ -19,7 +19,7 @@ protected:
 public:
 	virtual ~EmoCore();
 
-	std::string errorMessage(int errcode);
+	static std::string errorMessage(int errcode);
 
 	virtual int init(std::vector<unsigned char> &classes, const std::map<std::string, std::string> &parameters) = 0;
 	virtual int extractFace(const cv::Mat &img, cv::Rect &face) = 0;

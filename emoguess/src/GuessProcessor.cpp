@@ -39,12 +39,12 @@ std::string GuessProcessor::init(const std::string &classesFile, const std::stri
 
 	int err = myCore->init(letters, coreConfig);
 	if (err != EMOERR_OK) {
-		return myCore->errorMessage(err);
+		return EmoCore::errorMessage(err);
 	}
 
 	err = readConfig(guiConfig);
 	if (err != EMOERR_OK) {
-		return myCore->errorMessage(err);
+		return EmoCore::errorMessage(err);
 	}
 
 	return "";
@@ -187,7 +187,7 @@ std::string GuessProcessor::processImage(const cv::Mat &image) {
 
 	err = myCore->extractFace(image, faceRect);
 	if (err != EMOERR_OK) {
-		return myCore->errorMessage(err);
+		return EmoCore::errorMessage(err);
 	}
 
 	if (faceRect.width == 0 || faceRect.height == 0) {
@@ -200,7 +200,7 @@ std::string GuessProcessor::processImage(const cv::Mat &image) {
 
 	err = myCore->guess(face, results);
 	if (err != EMOERR_OK) {
-		return myCore->errorMessage(err);
+		return EmoCore::errorMessage(err);
 	}
 
 	timer = (double)cv::getTickCount() - timer;
