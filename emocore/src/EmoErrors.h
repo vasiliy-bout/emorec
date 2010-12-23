@@ -15,5 +15,7 @@
 #define EMOERR_INVALID_PARAMETERS            7
 #define EMOERR_INVALID_PCA_MODEL             8
 #define EMOERR_INVALID_MLP_OR_CLASSES        9
+#define EMOERR_INVALID_MLP_OR_PCA           10
+
 
 #endif /* __EMOERRORS_H__ */

@@ -75,6 +75,20 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 	if (myCvMLP.get_layer_count() == 0) {
 		return EMOERR_CANT_LOAD_MLP;
 	}
+	const CvMat *sizes = myCvMLP.get_layer_sizes();
+	if (sizes == 0) {
+		return EMOERR_INTERNAL_ERROR;
+	}
+	cv::Mat sizesMat(sizes);
+	if (sizesMat.type() != CV_32SC1 || sizesMat.rows != 1 || sizesMat.cols < 2) {
+		return EMOERR_INTERNAL_ERROR;
+	}
+	if (sizesMat.at<int>(0, 0) != myCvPCA.eigenvectors.rows) {
+		return EMOERR_INVALID_MLP_OR_PCA;
+	}
+	if (sizesMat.at<int>(0, sizesMat.cols - 1) != (int)myClasses.size()) {
+		return EMOERR_INVALID_MLP_OR_CLASSES;
+	}
 
 	myInitialized = true;
 	return 0;

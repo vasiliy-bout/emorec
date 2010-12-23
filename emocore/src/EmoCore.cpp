@@ -21,6 +21,10 @@ std::string EmoCore::errorMessage(int errcode) {
 	switch (errcode) {
 	case EMOERR_OK:
 		return "";
+
+	case EMOERR_INTERNAL_ERROR:
+		return "Internal application error";
+
 	case EMOERR_NOT_INITIALIZED:
 		return "Core is used before it is initialized";
 	case EMOERR_CANT_LOAD_CLASSIFIER:
@@ -35,6 +39,12 @@ std::string EmoCore::errorMessage(int errcode) {
 		return "Required parameter have not been specified";
 	case EMOERR_INVALID_PARAMETERS:
 		return "Invalid parameter value";
+	case EMOERR_INVALID_PCA_MODEL:
+		return "Invalid PCA model";
+	case EMOERR_INVALID_MLP_OR_CLASSES:
+		return "MLP doesn't corresponds to classes";
+	case EMOERR_INVALID_MLP_OR_PCA:
+		return "MLP doesn't corresponds to PCA";
 	}
 	return "Unknown error";
 }

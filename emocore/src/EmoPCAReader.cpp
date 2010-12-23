@@ -14,7 +14,11 @@ bool EmoPCAReader::loadPCA(const std::string &fileName, cv::Size &imageSize, cv:
 		return false;
 	}
 
-	if (imageSize.width * imageSize.height != pca.mean.cols) {
+	if (imageSize.width * imageSize.height != pca.mean.cols
+			|| pca.mean.rows != 1
+			|| pca.eigenvectors.cols != pca.mean.cols
+			|| pca.eigenvectors.rows != pca.eigenvalues.rows
+			|| pca.eigenvalues.cols != 1) {
 		return false;
 	}
 	return true;
