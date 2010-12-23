@@ -26,6 +26,9 @@ private:
 	void displayResults(const cv::Mat &image, const cv::Rect &faceRect, const std::map<unsigned char, float> &results);
 	int computeVerdict(const std::map<unsigned char, float> &results);
 
+	bool tryProcessVideo(const std::string &input);
+	bool tryProcessIndex(const std::string &input);
+
 private:
 	shared_ptr<EmoCore> myCore;
 	std::vector<EmoClass> myClasses;

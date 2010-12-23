@@ -3,7 +3,8 @@ ROOTDIR = $(CURDIR)
 include makefiles/platforms.mk
 
 EMOLIBDIRS = emocore
-APPDIRS = emoguess
+APPDIRS = emoguess 
+#APPDIRS = emoguess emotrain
 
 all:
 	@for dir in $(EMOLIBDIRS) $(APPDIRS); do \
@@ -22,6 +23,7 @@ clean:
 			cd $$dir; make $@; cd $(ROOTDIR); \
 		fi; \
 	done
+	@rm -rf bin
 
 
 install: all do_install

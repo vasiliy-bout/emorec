@@ -79,13 +79,103 @@ std::string GuessProcessor::processInput(const std::string &input) {
 	if (!image.empty()) {
 		std::cout << "Process image \"" << input << "\"" << std::endl;
 		msg = processImage(image);
-	} else {
+	} else if (!tryProcessVideo(input)
+			&& !tryProcessIndex(input)) {
 		msg = "Unable to handle input file";
 	}
+
+	std::cerr << "Press any key to quit..." << msg << std::endl;
+	cv::waitKey();
 
 	cvDestroyWindow(imageWindow.c_str());
 	return msg;
 }
+
+
+bool GuessProcessor::tryProcessVideo(const std::string &input) {
+	cv::VideoCapture capture;
+	if (input.length() == 1 && input[0] >= '0' && input[0] <= '9') {
+		int index = input[0] - '0';
+		capture.open(index);
+	} else {
+		capture.open(input);
+	}
+	if (!capture.isOpened()) {
+		return false;
+	}
+
+	std::cout << "Processing capture \"" << input << "\"" << std::endl;
+	std::cout << "Press `q` to quit..." << std::endl;
+
+	std::string msg;
+	cv::Mat frame;
+	char ch = 0;
+	int skipFrames = 0;
+	double fps = capture.get(CV_CAP_PROP_FPS);
+	if (fps > 1.0) {
+		skipFrames = (fps - 1.0);
+	}
+
+	std::cout << "DBG: fps = " << fps << "; skip = " << skipFrames << std::endl;
+
+	while (ch != 'q' && ch != 'Q' && capture.grab()) {
+		capture.retrieve(frame);
+		msg = processImage(frame);
+		if (!msg.empty()) {
+			std::cerr << "ERROR: " << msg << std::endl;
+			return false;
+		}
+		ch = cv::waitKey(1000);
+		for (int i = 0; i < skipFrames; ++i) {
+			if (!capture.grab()) {
+				return true;
+			}
+		}
+	}
+	return true;
+}
+
+bool GuessProcessor::tryProcessIndex(const std::string &input) {
+	FILE* f = fopen(input.c_str(), "rt");
+	if (f == 0) {
+		return false;
+	}
+
+	std::cout << "Processing index file \"" << input << "\"" << std::endl;
+	std::cout << "Press `q` to quit..." << std::endl;
+
+	std::string msg;
+	cv::Mat frame;
+	char ch = 0;
+
+	char buf[1000];
+	while (fgets(buf, 1000, f)) {
+		int len = (int) strlen(buf);
+		while (len > 0 && isspace(buf[len-1])) {
+			len--;
+		}
+		buf[len] = '\0';
+		std::string imageName(buf);
+
+		std::cout << "file " << imageName.c_str() << std::endl;
+		frame = cv::imread(imageName, 1);
+		if (!frame.empty()) {
+			msg = processImage(frame);
+		} else {
+			std::cout << "WARNING: unable to read file" << std::endl;
+			std::cout << std::endl;
+		}
+		ch = cv::waitKey();
+		if (ch == 'q' || ch == 'Q') {
+			break;
+		}
+	}
+
+	fclose(f);
+	return true;
+}
+
+
 
 std::string GuessProcessor::processImage(const cv::Mat &image) {
 	cv::Rect faceRect;
@@ -169,7 +259,6 @@ void GuessProcessor::displayResults(const cv::Mat &image, const cv::Rect &faceRe
 	std::cout << "VERDICT:\t\"" << myClasses[verdict].name().c_str() << "\"" << std::endl;
 	std::cout << "DONE" << std::endl;
 	std::cout << std::endl;
-	cv::waitKey();
 }
 
 /**
