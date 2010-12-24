@@ -22,7 +22,7 @@ endif
 
 EMOINCLUDE = -I "$(ROOTDIR)/emocore/include"
 
-CORE_LIBS = -L$(ROOTDIR)/emocore -lemocore -lcv -lml -lhighgui -lexpat
+CORE_LIBS = -L$(ROOTDIR)/emocore -lemocore -lcv -lml -lhighgui -lexpat -lcvaux
 
 
 ifneq "$(BUILD_RESOURCE_OBJECT)" "yes"
