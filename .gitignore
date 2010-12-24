@@ -4,6 +4,7 @@
 *.d
 *.o
 /tools/mkindex
+/tools/splitindex
 /emoguess/emoguess
 /emoeigen/emoeigen
 /emotrain/emotrain
