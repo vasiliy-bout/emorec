@@ -148,7 +148,20 @@ int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &resu
 		return EMOERR_INVALID_MLP_OR_CLASSES;
 	}
 
-	cv::normalize(output, output, 0.0, 1.0, cv::NORM_MINMAX);
+	float maxValue = 0.0f;
+	for (int j = 0; j < output.cols; ++j) {
+		float &prob = output.at<float>(0, j);
+		if (prob < 0.0f) {
+			prob = 0.0f;
+		} else if (prob > 1.0f) {
+			maxValue = prob;
+		}
+	}
+
+	if (maxValue > 1.0f) {
+		std::cerr << "maxValue = " << maxValue << std::endl;
+		output /= maxValue;
+	}
 
 	results.clear();
 	for (int j = 0; j < output.cols; ++j) {

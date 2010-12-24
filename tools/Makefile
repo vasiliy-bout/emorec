@@ -1,5 +1,5 @@
 
-TOOLS = mkindex
+TOOLS = mkindex splitindex
 
 
 .SUFFUXES: .cpp

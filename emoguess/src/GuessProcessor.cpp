@@ -13,6 +13,8 @@
 
 
 GuessProcessor::GuessProcessor() {
+	myPositiveFaces = 0;
+	myTotalFaces = 0;
 }
 
 std::string GuessProcessor::init(const std::string &classesFile, const std::string &coreConfigFile, const std::string &guiConfigFile) {
@@ -74,6 +76,9 @@ std::string GuessProcessor::processInput(const std::string &input) {
 	std::string msg;
 	cvNamedWindow(imageWindow.c_str(), 1);
 
+	myPositiveFaces = 0;
+	myTotalFaces = 0;
+
 	cv::Mat image = cv::imread(input, 1);
 
 	if (!image.empty()) {
@@ -84,10 +89,17 @@ std::string GuessProcessor::processInput(const std::string &input) {
 		msg = "Unable to handle input file";
 	}
 
+	if (myTotalFaces != 0) {
+		std::cout << std::endl;
+		std::cout << "TOTAL: " << myPositiveFaces << " of " << myTotalFaces << std::endl;
+		std::cout << std::endl;
+	}
+
 	std::cerr << "Press any key to quit..." << msg << std::endl;
 	cv::waitKey();
 
 	cvDestroyWindow(imageWindow.c_str());
+
 	return msg;
 }
 
@@ -156,11 +168,12 @@ bool GuessProcessor::tryProcessIndex(const std::string &input) {
 		}
 		buf[len] = '\0';
 		std::string imageName(buf);
+		char cat = category(imageName);
 
 		std::cout << "file " << imageName.c_str() << std::endl;
 		frame = cv::imread(imageName, 1);
 		if (!frame.empty()) {
-			msg = processImage(frame);
+			msg = processImage(frame, cat);
 		} else {
 			std::cout << "WARNING: unable to read file" << std::endl;
 			std::cout << std::endl;
@@ -177,7 +190,7 @@ bool GuessProcessor::tryProcessIndex(const std::string &input) {
 
 
 
-std::string GuessProcessor::processImage(const cv::Mat &image) {
+std::string GuessProcessor::processImage(const cv::Mat &image, char answer) {
 	cv::Rect faceRect;
 	int err;
 
@@ -210,7 +223,7 @@ std::string GuessProcessor::processImage(const cv::Mat &image) {
 		return "Unable to get results";
 	}
 
-	displayResults(image, faceRect, results);
+	displayResults(image, faceRect, results, answer);
 
 	std::cout << std::endl;
 	return "";
@@ -228,7 +241,7 @@ const static cv::Scalar colors[] =  {
 	CV_RGB(255,0,255)
 };
 
-void GuessProcessor::displayResults(const cv::Mat &image, const cv::Rect &faceRect, const std::map<unsigned char, float> &results) {
+void GuessProcessor::displayResults(const cv::Mat &image, const cv::Rect &faceRect, const std::map<unsigned char, float> &results, char answer) {
 	cv::Mat canvas;
 	image.copyTo(canvas);
 
@@ -251,6 +264,25 @@ void GuessProcessor::displayResults(const cv::Mat &image, const cv::Rect &faceRe
 	std::cout << std::endl;
 
 	int verdict = computeVerdict(results);
+
+	if (answer != '\0') {
+		int answerClass = -1;
+		for (size_t i = 0; i < myClasses.size(); ++i) {
+			if (myClasses[i].letter() == answer) {
+				answerClass = i;
+				break;
+			}
+		}
+		if (answerClass != -1) {
+			std::cout << "Class defined as: \"" << myClasses[answerClass].name() << "\"" << std::endl;
+			if (verdict >= 0 && myClasses[verdict].letter() == answer) {
+				++myPositiveFaces;
+			}
+			++myTotalFaces;
+		} else {
+			std::cout << "Unknown class defined" << std::endl;
+		}
+	}
 
 	if (verdict < 0) {
 		verdict = -verdict - 1;
@@ -294,5 +326,18 @@ int GuessProcessor::computeVerdict(const std::map<unsigned char, float> &results
 		//return -verdict - 1;
 	}
 	return verdict;
+}
+
+
+char GuessProcessor::category(const std::string &fileName) {
+	size_t line = fileName.rfind('-');
+	if (line == std::string::npos) {
+		return '\0';
+	}
+	line += 2;
+	if (line == fileName.length() || line == fileName.find('.', line)) {
+		return fileName.at(line - 1);
+	}
+	return '\0';
 }
 
