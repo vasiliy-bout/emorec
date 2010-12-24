@@ -3,4 +3,4 @@
 	<property name="face-width" value="80" />
 	<property name="face-height" value="80" />
 	<property name="max-components" value="0" />
-</classes>
+</config>

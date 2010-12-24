@@ -12,4 +12,4 @@
 	<property name="features" value="0.01" />
 	<property name="scale" value="1.1" />
 	<property name="minFacePercent" value="0.25" />
-</classes>
+</config>

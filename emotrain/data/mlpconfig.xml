@@ -7,5 +7,4 @@
            featuresArg >= 1.0f       - load at most ((int) featuresArg) first eigenfaces
 	-->
 	<property name="features" value="0.01" />
-	<property name="hiddenLayers" value="1" />
-</classes>
+</config>

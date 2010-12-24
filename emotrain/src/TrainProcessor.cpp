@@ -85,10 +85,15 @@ std::string TrainProcessor::processInput(const std::string &input) {
 		outputs.at<float>(i, index) = 1.0f;
 	}
 
-	cv::Mat layerSizes(1, 3, CV_32SC1);
+	int layers = std::max(3, inputSize / 4);
+
+	cv::Mat layerSizes(1, layers, CV_32SC1);
+	--layers;
 	layerSizes.at<int>(0, 0) = inputSize;
-	layerSizes.at<int>(0, 1) = (inputSize + outputSize) * 2 / 3;
-	layerSizes.at<int>(0, 2) = outputSize;
+	for (int i = 1; i < layers; ++i) {
+		layerSizes.at<int>(0, i) = inputSize + (outputSize - inputSize) * i / layers;
+	}
+	layerSizes.at<int>(0, layers) = outputSize;
 
 	myCvMLP.create(layerSizes, CvANN_MLP::SIGMOID_SYM, 1.0, 1.0);
 	myCvMLP.train(inputs, outputs, cv::Mat(), cv::Mat(), CvANN_MLP_TrainParams(), 0);
