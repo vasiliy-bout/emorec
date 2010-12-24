@@ -7,4 +7,6 @@
            featuresArg >= 1.0f       - load at most ((int) featuresArg) first eigenfaces
 	-->
 	<property name="features" value="0.01" />
+	<property name="layers-scale" value="0.25" />
+	<property name="layers-count" value="0" />
 </config>

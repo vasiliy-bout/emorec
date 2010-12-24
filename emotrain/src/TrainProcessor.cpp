@@ -47,16 +47,38 @@ std::string TrainProcessor::init(const std::string &configFile, const std::strin
 
 
 static const std::string PARAM_FEATURES = "features";
+static const std::string PARAM_LAYERS_SCALE = "layers-scale";
+static const std::string PARAM_LAYERS_COUNT = "layers-count";
 
 int TrainProcessor::readConfig(const std::map<std::string, std::string> &config) {
 	std::map<std::string, std::string>::const_iterator featuresIter = config.find(PARAM_FEATURES);
+	std::map<std::string, std::string>::const_iterator layersScaleIter = config.find(PARAM_LAYERS_SCALE);
+	std::map<std::string, std::string>::const_iterator layersCountIter = config.find(PARAM_LAYERS_COUNT);
 
-	if (featuresIter == config.end()) {
+	if (featuresIter == config.end()
+			|| (layersScaleIter == config.end() && layersCountIter == config.end())) {
 		return EMOERR_NOPARAMETERS;
 	}
 
 	if (sscanf(featuresIter->second.c_str(), "%f", &myFeatures) != 1) {
 		return EMOERR_INVALID_PARAMETERS;
+	}
+
+	myLayersScale = -1.0f;
+	myLayersCount = 0;
+	if (layersCountIter != config.end()) {
+		if (sscanf(layersCountIter->second.c_str(), "%d", &myLayersCount) != 1 || (myLayersCount < 3 && myLayersCount != 0)) {
+			return EMOERR_INVALID_PARAMETERS;
+		}
+	}
+	if (myLayersCount == 0) {
+		if (layersScaleIter == config.end() || sscanf(layersScaleIter->second.c_str(), "%f", &myLayersScale) != 1 || myLayersScale <= 0.0f) {
+			return EMOERR_INVALID_PARAMETERS;
+		}
+	}
+
+	if (myLayersCount == 0 && myLayersScale < 0.0f) {
+		return EMOERR_INTERNAL_ERROR;
 	}
 
 	return EMOERR_OK;
@@ -85,18 +107,35 @@ std::string TrainProcessor::processInput(const std::string &input) {
 		outputs.at<float>(i, index) = 1.0f;
 	}
 
-	int layers = std::max(3, inputSize / 4);
+	int layers = (myLayersCount > 0) ? myLayersCount : std::max(3, (int)(inputSize * myLayersScale));
+
+	std::cout << std::endl;
+	std::cout << "Layers number = " << layers << std::endl;
 
 	cv::Mat layerSizes(1, layers, CV_32SC1);
 	--layers;
+
+	std::cout << "Layer sizes: " << inputSize;
 	layerSizes.at<int>(0, 0) = inputSize;
+
 	for (int i = 1; i < layers; ++i) {
-		layerSizes.at<int>(0, i) = inputSize + (outputSize - inputSize) * i / layers;
+		const int sz = inputSize + (outputSize - inputSize) * i / layers;
+		std::cout << " " << sz;
+		layerSizes.at<int>(0, i) = sz;
 	}
+
+	std::cout << " " << outputSize << std::endl;
 	layerSizes.at<int>(0, layers) = outputSize;
+
+	std::cout << std::endl;
+	double timer = (double)cv::getTickCount();
 
 	myCvMLP.create(layerSizes, CvANN_MLP::SIGMOID_SYM, 1.0, 1.0);
 	myCvMLP.train(inputs, outputs, cv::Mat(), cv::Mat(), CvANN_MLP_TrainParams(), 0);
+
+	timer = (double)cv::getTickCount() - timer;
+	std::cout << "Training time = " << (timer / cv::getTickFrequency()) << " s" << std::endl;
+	std::cout << std::endl;
 
 	return "";
 }

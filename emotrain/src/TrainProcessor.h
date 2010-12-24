@@ -32,7 +32,8 @@ private:
 	cv::PCA myCvPCA;
 	cv::Size myFaceSize;
 
-	// MLP settings
+	float myLayersScale;
+	int myLayersCount;
 
 	CvANN_MLP myCvMLP;
 };
