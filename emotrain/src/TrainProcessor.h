@@ -15,7 +15,7 @@ class TrainProcessor {
 public:
 	TrainProcessor();
 
-	std::string init(const std::string &configFile, const std::string &classesFile, const std::string &pcaFile);
+	std::string init(const std::string &configFile, const std::string &classesFile);
 	std::string processInput(const std::string &input);
 	std::string saveToFile(const std::string &mlp);
 
@@ -28,8 +28,7 @@ private:
 
 private:
 	std::string myClassesList;
-	float myFeatures;
-	cv::PCA myCvPCA;
+
 	cv::Size myFaceSize;
 
 	float myLayersScale;

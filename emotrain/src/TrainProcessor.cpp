@@ -15,7 +15,7 @@
 TrainProcessor::TrainProcessor() {
 }
 
-std::string TrainProcessor::init(const std::string &configFile, const std::string &classesFile, const std::string &pcaFile) {
+std::string TrainProcessor::init(const std::string &configFile, const std::string &classesFile) {
 
 	std::map<std::string, std::string> config;
 
@@ -38,29 +38,32 @@ std::string TrainProcessor::init(const std::string &configFile, const std::strin
 		return EmoCore::errorMessage(err);
 	}
 
-	if (!EmoPCAReader::loadPCA(pcaFile, myFaceSize, myCvPCA, myFeatures)) {
-		return "Unable to load PCA";
-	}
-
 	return "";
 }
 
 
-static const std::string PARAM_FEATURES = "features";
 static const std::string PARAM_LAYERS_SCALE = "layers-scale";
 static const std::string PARAM_LAYERS_COUNT = "layers-count";
+static const std::string PARAM_FACE_WIDTH = "face-width";
+static const std::string PARAM_FACE_HEIGHT = "face-height";
+
 
 int TrainProcessor::readConfig(const std::map<std::string, std::string> &config) {
-	std::map<std::string, std::string>::const_iterator featuresIter = config.find(PARAM_FEATURES);
 	std::map<std::string, std::string>::const_iterator layersScaleIter = config.find(PARAM_LAYERS_SCALE);
 	std::map<std::string, std::string>::const_iterator layersCountIter = config.find(PARAM_LAYERS_COUNT);
+	std::map<std::string, std::string>::const_iterator faceWidthIter = config.find(PARAM_FACE_WIDTH);
+	std::map<std::string, std::string>::const_iterator faceHeightIter = config.find(PARAM_FACE_HEIGHT);
 
-	if (featuresIter == config.end()
+	if (faceWidthIter == config.end()
+			|| faceHeightIter == config.end()
 			|| (layersScaleIter == config.end() && layersCountIter == config.end())) {
 		return EMOERR_NOPARAMETERS;
 	}
 
-	if (sscanf(featuresIter->second.c_str(), "%f", &myFeatures) != 1) {
+	if (sscanf(faceWidthIter->second.c_str(), "%d", &myFaceSize.width) != 1 || myFaceSize.width <= 0) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+	if (sscanf(faceHeightIter->second.c_str(), "%d", &myFaceSize.height) != 1 || myFaceSize.height <= 0) {
 		return EMOERR_INVALID_PARAMETERS;
 	}
 
