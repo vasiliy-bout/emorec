@@ -34,6 +34,7 @@ private:
 
 	float myLayersScale;
 	int myLayersCount;
+	float myLayersSizeScale;
 
 	CvANN_MLP myCvMLP;
 };

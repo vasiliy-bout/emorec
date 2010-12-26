@@ -44,6 +44,8 @@ std::string TrainProcessor::init(const std::string &configFile, const std::strin
 
 static const std::string PARAM_LAYERS_SCALE = "layers-scale";
 static const std::string PARAM_LAYERS_COUNT = "layers-count";
+static const std::string PARAM_LAYERS_SIZE_SCALE = "layers-size-scale";
+
 static const std::string PARAM_FACE_WIDTH = "face-width";
 static const std::string PARAM_FACE_HEIGHT = "face-height";
 static const std::string PARAM_WINDOW_SIZE = "window-size";
@@ -52,6 +54,7 @@ static const std::string PARAM_WINDOW_SIZE = "window-size";
 int TrainProcessor::readConfig(const std::map<std::string, std::string> &config) {
 	std::map<std::string, std::string>::const_iterator layersScaleIter = config.find(PARAM_LAYERS_SCALE);
 	std::map<std::string, std::string>::const_iterator layersCountIter = config.find(PARAM_LAYERS_COUNT);
+	std::map<std::string, std::string>::const_iterator layersSizeScaleIter = config.find(PARAM_LAYERS_SIZE_SCALE);
 	std::map<std::string, std::string>::const_iterator faceWidthIter = config.find(PARAM_FACE_WIDTH);
 	std::map<std::string, std::string>::const_iterator faceHeightIter = config.find(PARAM_FACE_HEIGHT);
 	std::map<std::string, std::string>::const_iterator windowSizeIter = config.find(PARAM_WINDOW_SIZE);
@@ -59,6 +62,7 @@ int TrainProcessor::readConfig(const std::map<std::string, std::string> &config)
 	if (faceWidthIter == config.end()
 			|| faceHeightIter == config.end()
 			|| windowSizeIter == config.end()
+			|| layersSizeScaleIter == config.end()
 			|| (layersScaleIter == config.end() && layersCountIter == config.end())) {
 		return EMOERR_NOPARAMETERS;
 	}
@@ -88,6 +92,10 @@ int TrainProcessor::readConfig(const std::map<std::string, std::string> &config)
 
 	if (myLayersCount == 0 && myLayersScale < 0.0f) {
 		return EMOERR_INTERNAL_ERROR;
+	}
+
+	if (sscanf(layersSizeScaleIter->second.c_str(), "%f", &myLayersSizeScale) != 1 || myLayersSizeScale <= 0.0f) {
+		return EMOERR_INVALID_PARAMETERS;
 	}
 
 	return EMOERR_OK;
@@ -134,7 +142,8 @@ std::string TrainProcessor::processInput(const std::string &input) {
 	layerSizes.at<int>(0, 0) = inputSize;
 
 	for (int i = 1; i < layers; ++i) {
-		const int sz = inputSize + (outputSize - inputSize) * i / layers;
+		const float scale = myLayersSizeScale + (1.0f - myLayersSizeScale) * (i-1) / (layers-1);
+		const int sz = (int)(scale * (inputSize + (outputSize - inputSize) * i / layers));
 		std::cout << " " << sz;
 		layerSizes.at<int>(0, i) = sz;
 	}

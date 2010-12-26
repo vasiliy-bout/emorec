@@ -5,4 +5,5 @@
 	<property name="face-height" value="80" />
 	<property name="layers-scale" value="0.0" />
 	<property name="layers-count" value="3" />
+	<property name="layers-size-scale" value="1.0" />
 </config>

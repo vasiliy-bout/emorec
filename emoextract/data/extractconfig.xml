@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<config>
+	<property name="cascade" value="haarcascades/haarcascade_frontalface_alt.xml" />
+	<property name="scale" value="1.1" />
+	<property name="minFacePercent" value="0.25" />
+
+	<property name="start-scale" value="2.5" />
+
+	<!-- integer values in percents: -->
+	<property name="morph-offset" value="10" />
+	<property name="morph-offset-step" value="2" />
+	<property name="morph-scale" value="10" />
+	<property name="morph-scale-step" value="3" />
+
+	<property name="out-folder" value="out" />
+	<property name="out-width" value="80" />
+	<property name="out-height" value="80" />
+</config>
