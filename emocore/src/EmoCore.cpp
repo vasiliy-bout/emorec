@@ -29,8 +29,8 @@ std::string EmoCore::errorMessage(int errcode) {
 		return "Core is used before it is initialized";
 	case EMOERR_CANT_LOAD_CLASSIFIER:
 		return "Unable to load classifier";
-	case EMOERR_CANT_LOAD_PCA:
-		return "Unable to load PCA-model";
+	/*case EMOERR_CANT_LOAD_PCA:
+		return "Unable to load PCA-model";*/
 	case EMOERR_CANT_LOAD_MLP:
 		return "Unable to load MLP-model";
 	case EMOERR_INVALID_CLASSES:
@@ -39,12 +39,14 @@ std::string EmoCore::errorMessage(int errcode) {
 		return "Required parameter have not been specified";
 	case EMOERR_INVALID_PARAMETERS:
 		return "Invalid parameter value";
-	case EMOERR_INVALID_PCA_MODEL:
-		return "Invalid PCA model";
+	/*case EMOERR_INVALID_PCA_MODEL:
+		return "Invalid PCA model";*/
 	case EMOERR_INVALID_MLP_OR_CLASSES:
 		return "MLP doesn't corresponds to classes";
-	case EMOERR_INVALID_MLP_OR_PCA:
-		return "MLP doesn't corresponds to PCA";
+	/*case EMOERR_INVALID_MLP_OR_PCA:
+		return "MLP doesn't corresponds to PCA";*/
+	case EMOERR_INVALID_MLP_OR_FEATURES:
+		return "MLP doesn't corresponds to features settings";
 	}
 	return "Unknown error";
 }

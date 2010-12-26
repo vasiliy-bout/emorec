@@ -4,6 +4,8 @@
 
 #include "EmoCore.h"
 
+#include "EmoFeatures.h"
+
 
 class EmoCoreImpl : public EmoCore {
 
@@ -23,11 +25,13 @@ private:
 	bool myInitialized;
 	std::vector<unsigned char> myClasses;
 	cv::CascadeClassifier myCvCascade;
-	cv::PCA myCvPCA;
+
+	cv::Size myFaceSize;
+	shared_ptr<EmoFeatures> myFeatures;
+
 	CvANN_MLP myCvMLP;
 	float myScale;
 	float myMinFace;
-	int myFaceSize;
 };
 
 inline const std::vector<unsigned char> &EmoCoreImpl::classes() const { return myClasses; }

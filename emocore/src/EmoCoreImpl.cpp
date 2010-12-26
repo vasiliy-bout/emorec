@@ -10,8 +10,11 @@
 
 static const std::string PARAM_CASCADE = "cascade";
 static const std::string PARAM_MLP = "mlp";
-static const std::string PARAM_PCA = "pca";
-static const std::string PARAM_FEATURES = "features";
+
+static const std::string PARAM_WINDOW_SIZE = "window-size";
+static const std::string PARAM_FACE_WIDTH = "face-width";
+static const std::string PARAM_FACE_HEIGHT = "face-height";
+
 static const std::string PARAM_SCALE = "scale";
 static const std::string PARAM_MIN_FACE = "minFacePercent";
 
@@ -27,15 +30,19 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 
 	std::map<std::string, std::string>::const_iterator cascadeIter = parameters.find(PARAM_CASCADE);
 	std::map<std::string, std::string>::const_iterator mlpIter = parameters.find(PARAM_MLP);
-	std::map<std::string, std::string>::const_iterator pcaIter = parameters.find(PARAM_PCA);
-	std::map<std::string, std::string>::const_iterator featuresIter = parameters.find(PARAM_FEATURES);
+
+	std::map<std::string, std::string>::const_iterator windowSizeIter = parameters.find(PARAM_WINDOW_SIZE);
+	std::map<std::string, std::string>::const_iterator faceWidthIter = parameters.find(PARAM_FACE_WIDTH);
+	std::map<std::string, std::string>::const_iterator faceHeightIter = parameters.find(PARAM_FACE_HEIGHT);
+
 	std::map<std::string, std::string>::const_iterator scaleIter = parameters.find(PARAM_SCALE);
 	std::map<std::string, std::string>::const_iterator minFaceIter = parameters.find(PARAM_MIN_FACE);
 
 	if (cascadeIter == parameters.end() ||
 			mlpIter == parameters.end() ||
-			pcaIter == parameters.end() ||
-			featuresIter == parameters.end() ||
+			faceWidthIter == parameters.end() ||
+			faceHeightIter == parameters.end() ||
+			windowSizeIter == parameters.end() ||
 			scaleIter == parameters.end() ||
 			minFaceIter == parameters.end() ||
 			myClasses.empty()) {
@@ -44,12 +51,19 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 
 	const std::string &cascade = cascadeIter->second;
 	const std::string &mlp = mlpIter->second;
-	const std::string &pca = pcaIter->second;
 
-	float features = 0.01f;
-	if (sscanf(featuresIter->second.c_str(), "%f", &features) != 1) {
+	if (sscanf(faceWidthIter->second.c_str(), "%d", &myFaceSize.width) != 1 || myFaceSize.width <= 0) {
 		return EMOERR_INVALID_PARAMETERS;
 	}
+	if (sscanf(faceHeightIter->second.c_str(), "%d", &myFaceSize.height) != 1 || myFaceSize.height <= 0) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+
+	int windowSize;
+	if (sscanf(windowSizeIter->second.c_str(), "%d", &windowSize) != 1 || windowSize <= 0) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+
 	if (sscanf(scaleIter->second.c_str(), "%f", &myScale) != 1 || myScale <= 1.0f) {
 		return EMOERR_INVALID_PARAMETERS;
 	}
@@ -62,14 +76,7 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 		return EMOERR_CANT_LOAD_CLASSIFIER;
 	}
 
-	cv::Size imageSize;
-	if (!EmoPCAReader::loadPCA(pca, imageSize, myCvPCA, features)) {
-		return EMOERR_CANT_LOAD_PCA;
-	}
-	if (imageSize.width != imageSize.height) {
-		return EMOERR_INVALID_PCA_MODEL;
-	}
-	myFaceSize = imageSize.height;
+	myFeatures = new EmoFeatures(windowSize);
 
 	myCvMLP.load(mlp.c_str());
 	if (myCvMLP.get_layer_count() == 0) {
@@ -83,8 +90,8 @@ int EmoCoreImpl::init(std::vector<unsigned char> &classes, const std::map<std::s
 	if (sizesMat.type() != CV_32SC1 || sizesMat.rows != 1 || sizesMat.cols < 2) {
 		return EMOERR_INTERNAL_ERROR;
 	}
-	if (sizesMat.at<int>(0, 0) != myCvPCA.eigenvectors.rows) {
-		return EMOERR_INVALID_MLP_OR_PCA;
+	if (sizesMat.at<int>(0, 0) != myFeatures->featuresNumber(myFaceSize)) {
+		return EMOERR_INVALID_MLP_OR_FEATURES;
 	}
 	if (sizesMat.at<int>(0, sizesMat.cols - 1) != (int)myClasses.size()) {
 		return EMOERR_INVALID_MLP_OR_CLASSES;
@@ -121,7 +128,7 @@ int EmoCoreImpl::extractFace(const cv::Mat &img, cv::Rect &face) {
 void EmoCoreImpl::convertFace(const cv::Mat &face, cv::Mat &converted) const {
 	cv::Mat gray, resized;
 	cv::cvtColor(face, gray, CV_BGR2GRAY);
-	cv::resize(gray, resized, cv::Size(myFaceSize, myFaceSize), 0, 0, cv::INTER_LINEAR);
+	cv::resize(gray, resized, myFaceSize, 0, 0, cv::INTER_LINEAR);
 	cv::equalizeHist(resized, resized);
 	resized.convertTo(converted, CV_32FC1, 1.0 / 255);
 }
@@ -136,7 +143,7 @@ int EmoCoreImpl::guess(const cv::Mat &face, std::map<unsigned char, float> &resu
 	convertFace(face, converted);
 
 	cv::Mat features;
-	myCvPCA.project(converted.reshape(0, 1), features);
+	myFeatures->project(converted, features);
 
 	cv::Mat output;
 	myCvMLP.predict(features, output);

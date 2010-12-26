@@ -30,6 +30,7 @@ private:
 	std::string myClassesList;
 
 	cv::Size myFaceSize;
+	int myWindowSize;
 
 	float myLayersScale;
 	int myLayersCount;

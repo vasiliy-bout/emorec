@@ -3,7 +3,8 @@ ROOTDIR = $(CURDIR)
 include makefiles/platforms.mk
 
 EMOLIBDIRS = emocore
-APPDIRS = tools emoguess emoeigen emotrain emoshow
+APPDIRS = tools emoguess emotrain emoshow
+#APPDIRS = emoeigen
 
 all:
 	@for dir in $(EMOLIBDIRS) $(APPDIRS); do \

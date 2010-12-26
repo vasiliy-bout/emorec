@@ -43,8 +43,8 @@ do_install:
 	@install -m 0644 $(wildcard data/*.xml) $(BINDIR)
 	@install -d $(BINDIR)/haarcascades
 	@install -m 0644 $(wildcard data/haarcascades/*.xml) $(BINDIR)/haarcascades
-	@install -d $(BINDIR)/pca
-	@install -m 0644 $(wildcard data/pca/*.xml) $(BINDIR)/pca
+#	@install -d $(BINDIR)/pca
+#	@install -m 0644 $(wildcard data/pca/*.xml) $(BINDIR)/pca
 	@install -d $(BINDIR)/mlp
-	@install -m 0644 $(wildcard data/mlp/*.xml) $(BINDIR)/mlp
+	@install -m 0644 $(wildcard data/mlp/*.mlp) $(BINDIR)/mlp
 

@@ -9,7 +9,7 @@
 
 #include <EmoConfigReader.h>
 #include <EmoClassesReader.h>
-#include <EmoPCAReader.h>
+#include <EmoFeatures.h>
 
 
 TrainProcessor::TrainProcessor() {
@@ -46,6 +46,7 @@ static const std::string PARAM_LAYERS_SCALE = "layers-scale";
 static const std::string PARAM_LAYERS_COUNT = "layers-count";
 static const std::string PARAM_FACE_WIDTH = "face-width";
 static const std::string PARAM_FACE_HEIGHT = "face-height";
+static const std::string PARAM_WINDOW_SIZE = "window-size";
 
 
 int TrainProcessor::readConfig(const std::map<std::string, std::string> &config) {
@@ -53,9 +54,11 @@ int TrainProcessor::readConfig(const std::map<std::string, std::string> &config)
 	std::map<std::string, std::string>::const_iterator layersCountIter = config.find(PARAM_LAYERS_COUNT);
 	std::map<std::string, std::string>::const_iterator faceWidthIter = config.find(PARAM_FACE_WIDTH);
 	std::map<std::string, std::string>::const_iterator faceHeightIter = config.find(PARAM_FACE_HEIGHT);
+	std::map<std::string, std::string>::const_iterator windowSizeIter = config.find(PARAM_WINDOW_SIZE);
 
 	if (faceWidthIter == config.end()
 			|| faceHeightIter == config.end()
+			|| windowSizeIter == config.end()
 			|| (layersScaleIter == config.end() && layersCountIter == config.end())) {
 		return EMOERR_NOPARAMETERS;
 	}
@@ -64,6 +67,9 @@ int TrainProcessor::readConfig(const std::map<std::string, std::string> &config)
 		return EMOERR_INVALID_PARAMETERS;
 	}
 	if (sscanf(faceHeightIter->second.c_str(), "%d", &myFaceSize.height) != 1 || myFaceSize.height <= 0) {
+		return EMOERR_INVALID_PARAMETERS;
+	}
+	if (sscanf(windowSizeIter->second.c_str(), "%d", &myWindowSize) != 1 || myWindowSize <= 0) {
 		return EMOERR_INVALID_PARAMETERS;
 	}
 
@@ -96,11 +102,17 @@ std::string TrainProcessor::processInput(const std::string &input) {
 		return "Unable to load samples from file";
 	}
 
-	const int inputSize = myCvPCA.eigenvalues.rows;
+	EmoFeatures ef(myWindowSize);
+
+	const int inputSize = ef.featuresNumber(myFaceSize);
 	const int outputSize = myClassesList.length();
 
-	cv::Mat inputs;
-	myCvPCA.project(samples, inputs);
+	cv::Mat inputs(samples.rows, inputSize, CV_32FC1);
+	for (int i = 0; i < samples.rows; ++i) {
+		const cv::Mat &face = samples.row(i).reshape(0, myFaceSize.height);
+		cv::Mat features = inputs.row(i);
+		ef.project(face, features);
+	}
 
 	cv::Mat outputs(samples.rows, outputSize, CV_32FC1);
 	outputs = 0.0f;

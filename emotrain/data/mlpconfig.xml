@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <config>
+	<property name="window-size" value="4" />
 	<property name="face-width" value="80" />
 	<property name="face-height" value="80" />
-	<property name="layers-scale" value="0.25" />
-	<property name="layers-count" value="0" />
+	<property name="layers-scale" value="0.0" />
+	<property name="layers-count" value="3" />
 </config>
