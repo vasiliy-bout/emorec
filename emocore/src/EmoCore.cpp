@@ -42,9 +42,9 @@ std::string EmoCore::errorMessage(int errcode) {
 	case EMOERR_INVALID_PCA_MODEL:
 		return "Invalid PCA model";
 	case EMOERR_INVALID_MLP_OR_CLASSES:
-		return "MLP doesn't corresponds to classes";
+		return "MLP doesn't correspond to classes";
 	case EMOERR_INVALID_MLP_OR_PCA:
-		return "MLP doesn't corresponds to PCA";
+		return "MLP doesn't correspond to PCA";
 	}
 	return "Unknown error";
 }
